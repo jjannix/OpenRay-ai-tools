@@ -9,8 +9,18 @@
     {
       "name": "proofread",
       "title": "Proofread",
-      "description": "Proofreads your inputed text.",
+      "description": "Proofreads your copied text.",
       "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "apiKey",
+      "type": "password",
+      "required": true,
+      "title": "OpenRouter API Key",
+      "description": "Your OpenRouter API Key",
+      "placeholder": "sk-or-..."
     }
   ],
   "dependencies": {
