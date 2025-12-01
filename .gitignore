@@ -1,0 +1,124 @@
+# ==============================================
+# TypeScript/JavaScript Build Outputs
+# ==============================================
+# Compiled JavaScript files
+dist/
+build/
+out/
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+
+# TypeScript cache
+*.tsbuildinfo
+
+# ==============================================
+# Dependencies
+# ==============================================
+# Node modules (for traditional npm/yarn projects)
+node_modules/
+
+# ==============================================
+# Raycast Extension Specific
+# ==============================================
+# Raycast environment type definitions
+raycast-env.d.ts
+
+# Raycast build cache
+.raycast-swift-build
+.swiftpm
+
+# Compiled Raycast extensions
+compiled_raycast_swift/
+compiled_raycast_rust/
+
+# Raycast metadata
+.raycast/
+.raycast-plugins/
+
+# ==============================================
+# Development Environment
+# ==============================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains IDEs (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# ==============================================
+# Logs
+# ==============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+bun-debug.log*
+bun-error.log*
+
+# ==============================================
+# Runtime Data & Coverage
+# ==============================================
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output/
+
+# ==============================================
+# Cache and Temporary Files
+# ==============================================
+# Cache directories
+.cache/
+.parcel-cache/
+.tmp/
+temp/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ==============================================
+# Package Manager Lock Files
+# ==============================================
+# Keep bun.lock (Bun package manager)
+# Ignore other lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ==============================================
+# Environment and Configuration
+# ==============================================
+# Environment variables
+.env
+.env.local
+# ==============================================
+# Build Tools & Misc
+# ==============================================
+# ESLint cache
+.eslintcache
+
+# Backup files
+*.bak
+*.backup
+
+# Storybook build outputs
+storybook-static/
