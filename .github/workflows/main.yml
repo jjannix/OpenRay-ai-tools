@@ -1,0 +1,2 @@
+- name: Setup Bun
+  uses: oven-sh/setup-bun@v2.0.2
