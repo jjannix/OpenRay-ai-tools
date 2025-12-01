@@ -2,7 +2,7 @@ name: Bun Build on Push
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   build:
