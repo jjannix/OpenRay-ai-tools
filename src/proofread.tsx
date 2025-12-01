@@ -8,7 +8,11 @@ export default function Command() {
   const { data: clipboardText, isLoading: isReadingClipboard } = usePromise(readText);
 
   // Hook to process the text with AI once clipboard content is available
-  const { data: result, isLoading: isProcessing, error } = usePromise(
+  const {
+    data: result,
+    isLoading: isProcessing,
+    error,
+  } = usePromise(
     async (text) => {
       // If clipboard is empty, do nothing
       if (!text) return null;
@@ -26,7 +30,7 @@ export default function Command() {
       return response;
     },
     [clipboardText], // Re-run if clipboard text changes (though typically runs once on mount)
-    { execute: !!clipboardText } // Only execute if there is text to process
+    { execute: !!clipboardText }, // Only execute if there is text to process
   );
 
   // If an error occurs during API call, display it

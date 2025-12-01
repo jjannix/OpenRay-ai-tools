@@ -4,68 +4,71 @@ const { systemprompts } = systempromptsConfig;
 
 // Define the shape of the preferences object
 type Preferences = {
-    apiKey: string; // The OpenRouter API key
+  apiKey: string; // The OpenRouter API key
 };
 
 // Define valid agent names based on the keys in systemprompts.json
 export type AgentType = keyof typeof systemprompts;
 
 // Function to fetch AI response from OpenRouter
-// Accepts the input text and the agent type (e.g., "proofreader", "translator")
+// Accepts the input text and the agent type
 export async function fetchAIResponse(text: string, agent: AgentType) {
-    const preferences = getPreferenceValues<Preferences>();
-    const apiKey = preferences.apiKey;
+  const preferences = getPreferenceValues<Preferences>();
+  const apiKey = preferences.apiKey;
 
-    // Check if API key is present
-    if (!apiKey) {
-        throw new Error("OpenRouter API key is missing. Please set it in extension preferences.");
-    }
+  // Check if API key is present
+  if (!apiKey) {
+    throw new Error("OpenRouter API key is missing. Please set it in extension preferences.");
+  }
 
-    // Get the configuration for the selected agent from the JSON file
-    const agentPrompts = systemprompts[agent];
-    // Get the default system prompt for that agent
-    const systemMessage = agentPrompts.default;
+  // Get the configuration for the selected agent from the JSON file
+  const agentPrompts = systemprompts[agent];
+  // Get the default system prompt for that agent
+  const systemMessage = agentPrompts.default;
 
-    // Validate that a system prompt exists
-    if (!systemMessage) {
-        throw new Error(`No default system prompt found for agent: ${agent}`);
-    }
+  // Validate that a system prompt exists
+  if (!systemMessage) {
+    throw new Error(`No default system prompt found for agent: ${agent}`);
+  }
 
-    // specific model to use (currently hardcoded)
-    const model = "openrouter/bert-nebulon-alpha";
+  // specific model to use (currently hardcoded)
+  const model = "openrouter/bert-nebulon-alpha";
 
-    // Make a POST request to the OpenRouter API
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json", // Set content type to JSON
-            Authorization: `Bearer ${apiKey}` // Authenticate with the API key
-        },
-        body: JSON.stringify({
-            model: model, // Specify the model
-            messages: [
-                { role: "system", content: systemMessage }, // The system instruction
-                { role: "user", content: text }, // The user's input text
-            ],
-        }),
-    });
+  // Make a POST request to the OpenRouter API
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json", // Set content type to JSON
+      Authorization: `Bearer ${apiKey}`, // Authenticate with the API key
+    },
+    body: JSON.stringify({
+      model: model, // Specify the model
+      messages: [
+        { role: "system", content: systemMessage }, // The system instruction
+        { role: "user", content: text }, // The user's input text
+      ],
+    }),
+  });
 
-    // Check if the HTTP request was successful
-    if (!response.ok) {
-        const errText = await response.text(); // Get error details
-        throw new Error(`OpenRouter API error: ${response.status} ${response.statusText} - ${errText}`);
-    }
+  // Check if the HTTP request was successful
+  if (!response.ok) {
+    const errText = await response.text(); // Get error details
+    throw new Error(`OpenRouter API error: ${response.status} ${response.statusText} - ${errText}`);
+  }
 
-    // Parse the JSON response
-    const data = (await response.json()) as any;
-    // Extract the content from the AI's message
-    const result = data?.choices?.[0]?.message?.content;
+  // Parse the JSON response
+  interface OpenRouterResponse {
+    choices: { message: { content: string } }[];
+  }
 
-    // Check if we got a valid result
-    if (!result) {
-        throw new Error("No content received from AI");
-    }
+  const data = (await response.json()) as OpenRouterResponse;
+  const result = data?.choices?.[0]?.message?.content;
 
-    // Return the AI's response text
-    return result;
+  // Check if we got a valid result
+  if (!result) {
+    throw new Error("No content received from AI");
+  }
+
+  // Return the AI's response text
+  return result;
 }
