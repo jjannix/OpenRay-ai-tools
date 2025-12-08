@@ -37,6 +37,11 @@ export const gptOSS20: ModelConfig = {
     model: "gpt-oss-20b",
     openrouter: "openai/gpt-oss-20b:free",
 };
+export const gptOSS120: ModelConfig = {
+    name: "GPT OSS 120B",
+    model: "gpt-oss-120b",
+    openrouter: "openai/gpt-oss-120b:free",
+};
 
 // Mistral models
 export const mistralSmall3_1_24b: ModelConfig = {
@@ -52,6 +57,20 @@ export const kimiK2: ModelConfig = {
     openrouter: "moonshotai/kimi-k2:free",
 };
 
+// AllenAI models
+export const olmo3_32bThink: ModelConfig = {
+    name: "Olmo 3.32b Think",
+    model: "olmo-3-32b-think",
+    openrouter: "allenai/olmo-3-32b-think:free",
+};
+
+// Qwen models
+export const qwen3_4b: ModelConfig = {
+    name: "Qwen 3.4b",
+    model: "qwen-3-4b",
+    openrouter: "qwen/qwen3-4b:free",
+};
+
 // Export all models as an object for easy iteration
 export const models = {
     amazonNova2Lite,
@@ -59,8 +78,11 @@ export const models = {
     gemma3_27b,
     gemini2Flash,
     gptOSS20,
+    gptOSS120,
     mistralSmall3_1_24b,
     kimiK2,
+    olmo3_32bThink,
+    qwen3_4b,
 } as const;
 
 // Default model to use
