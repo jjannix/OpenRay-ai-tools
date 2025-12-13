@@ -27,6 +27,15 @@
       "title": "OpenRouter API Key",
       "description": "Your OpenRouter API Key",
       "placeholder": "sk-or-..."
+    },
+    {
+      "name": "showNerdStats",
+      "type": "checkbox",
+      "required": false,
+      "default": false,
+      "title": "Enable Nerd Stats",
+      "description": "Show technical details like model used and request time",
+      "label": "Show model and timing information"
     }
   ],
   "dependencies": {
