@@ -38,7 +38,13 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
     }
     model = TRANSLATE_MODEL.openrouter;
   } else if (agent === "proofreader") {
-    if (agentInstructions) {
+    // Check if the agentInstructions match a specific style key in the prompts
+    // Treat agentPrompts as a dictionary to check for keys safely
+    const styles = agentPrompts as Record<string, string>;
+    if (agentInstructions && styles[agentInstructions]) {
+      systemMessage = styles[agentInstructions];
+    } else if (agentInstructions) {
+      // Fallback for custom styles not in JSON
       systemMessage = `${systemMessage} Style: ${agentInstructions}.`;
     }
     model = PROOFREAD_MODEL.openrouter;
