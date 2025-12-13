@@ -1,9 +1,11 @@
-import { Detail, ActionPanel, Action, showToast, Toast } from "@raycast/api"; // Import UI components
+import { useState } from "react";
+import { Detail, ActionPanel, Action, showToast, Toast, Icon } from "@raycast/api"; // Import UI components
 import { usePromise } from "@raycast/utils"; // Import usePromise hook for async operations
 import { fetchAIResponse } from "./utils/api"; // Import API helper function
 import { readText } from "./utils/clipboard"; // Import clipboard utilities
 
 export default function Command() {
+  const [style, setStyle] = useState<string | undefined>();
   // Hook to read clipboard content asynchronously
   const { data: clipboardText, isLoading: isReadingClipboard } = usePromise(readText);
 
@@ -13,7 +15,7 @@ export default function Command() {
     isLoading: isProcessing,
     error,
   } = usePromise(
-    async (text) => {
+    async (text, style) => {
       // If clipboard is empty, do nothing
       if (!text) return null;
 
@@ -21,7 +23,7 @@ export default function Command() {
       await showToast({ style: Toast.Style.Animated, title: "Proofreading..." });
 
       // Send text to OpenRouter API with "proofreader" agent settings
-      const response = await fetchAIResponse(text, "proofreader");
+      const response = await fetchAIResponse(text, "proofreader", style);
 
       // Notify user of success
       await showToast({ style: Toast.Style.Success, title: "Proofreading complete" });
@@ -29,7 +31,7 @@ export default function Command() {
       // Return the response to update the UI
       return response;
     },
-    [clipboardText], // Re-run if clipboard text changes (though typically runs once on mount)
+    [clipboardText, style], // Re-run if clipboard text or style changes
     { execute: !!clipboardText }, // Only execute if there is text to process
   );
 
@@ -51,8 +53,16 @@ export default function Command() {
       // Add actions for the user
       actions={
         <ActionPanel>
-          {result && <Action.CopyToClipboard content={result} title="Copy Corrected Text" />}
-          {clipboardText && <Action.CopyToClipboard content={clipboardText} title="Copy Original Text" />}
+          <ActionPanel.Section title="Copy">
+            {result && <Action.CopyToClipboard content={result} title="Copy Corrected Text" />}
+            {clipboardText && <Action.CopyToClipboard content={clipboardText} title="Copy Original Text" />}
+          </ActionPanel.Section>
+          <ActionPanel.Section title="Rerun with Style">
+            <ActionPanel.Submenu title="Choose Style" icon={Icon.Book}>
+              <Action title="Professional" onAction={() => setStyle("professional")} />
+              <Action title="Casual" onAction={() => setStyle("casual")} />
+            </ActionPanel.Submenu>
+          </ActionPanel.Section>
         </ActionPanel>
       }
     />

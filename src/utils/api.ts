@@ -1,6 +1,6 @@
 import { getPreferenceValues } from "@raycast/api"; // Import function to get user preferences
 import systempromptsConfig from "./systemprompts.json"; // Import system prompts configuration
-import { DEFAULT_MODEL } from "./constants"; // Import model configuration
+import { PROOFREAD_MODEL, TRANSLATE_MODEL, DEFAULT_MODEL } from "./constants"; // Import model configuration
 const { systemprompts } = systempromptsConfig;
 
 // Define the shape of the preferences object
@@ -13,7 +13,7 @@ export type AgentType = keyof typeof systemprompts;
 
 // Function to fetch AI response from OpenRouter
 // Accepts the input text, the agent type, and an optional target language for translations
-export async function fetchAIResponse(text: string, agent: AgentType, targetLanguage?: string) {
+export async function fetchAIResponse(text: string, agent: AgentType, agentInstructions?: string) {
   const preferences = getPreferenceValues<Preferences>();
   const apiKey = preferences.apiKey;
 
@@ -27,18 +27,35 @@ export async function fetchAIResponse(text: string, agent: AgentType, targetLang
   // Get the default system prompt for that agent
   let systemMessage = agentPrompts.default;
 
-  // If a target language is provided, append it to the system message
-  if (targetLanguage) {
-    systemMessage = `${systemMessage} Target language: ${targetLanguage}.`;
+  // Determine which model to use based on the agent
+  let model: string;
+
+  // If the agent is a translator, check if a target language is provided
+  if (agent === "translator") {
+    // If a target language is provided, append it to the system message
+    if (agentInstructions) {
+      systemMessage = `${systemMessage} Target language: ${agentInstructions}.`;
+    }
+    model = TRANSLATE_MODEL.openrouter;
+  } else if (agent === "proofreader") {
+    // Check if the agentInstructions match a specific style key in the prompts
+    // Treat agentPrompts as a dictionary to check for keys safely
+    const styles = agentPrompts as Record<string, string>;
+    if (agentInstructions && styles[agentInstructions]) {
+      systemMessage = styles[agentInstructions];
+    } else if (agentInstructions) {
+      // Fallback for custom styles not in JSON
+      systemMessage = `${systemMessage} Style: ${agentInstructions}.`;
+    }
+    model = PROOFREAD_MODEL.openrouter;
+  } else {
+    model = DEFAULT_MODEL.openrouter;
   }
 
   // Validate that a system prompt exists
   if (!systemMessage) {
     throw new Error(`No default system prompt found for agent: ${agent}`);
   }
-
-  // Get the model to use from constants
-  const model = DEFAULT_MODEL.openrouter;
 
   // Make a POST request to the OpenRouter API
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
