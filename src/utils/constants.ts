@@ -86,4 +86,5 @@ export const models = {
 } as const;
 
 // Default model to use
-export const DEFAULT_MODEL = gptOSS20;
+export const TRANSLATE_MODEL = gptOSS20;
+export const PROOFREAD_MODEL = gptOSS120;

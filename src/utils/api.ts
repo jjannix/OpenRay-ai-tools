@@ -1,6 +1,6 @@
 import { getPreferenceValues } from "@raycast/api"; // Import function to get user preferences
 import systempromptsConfig from "./systemprompts.json"; // Import system prompts configuration
-import { DEFAULT_MODEL } from "./constants"; // Import model configuration
+import { PROOFREAD_MODEL, TRANSLATE_MODEL } from "./constants"; // Import model configuration
 const { systemprompts } = systempromptsConfig;
 
 // Define the shape of the preferences object
@@ -33,11 +33,13 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
     if (agentInstructions) {
       systemMessage = `${systemMessage} Target language: ${agentInstructions}.`;
     }
+    const model = TRANSLATE_MODEL.openrouter;
   }
   if (agent === "proofreader") {
     if (agentInstructions) {
       systemMessage = `${systemMessage} Style: ${agentInstructions}.`;
     }
+    const model = PROOFREAD_MODEL.openrouter;
   }
 
   // Validate that a system prompt exists
@@ -46,7 +48,6 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
   }
 
   // Get the model to use from constants
-  const model = DEFAULT_MODEL.openrouter;
 
   // Make a POST request to the OpenRouter API
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
