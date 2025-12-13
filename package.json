@@ -11,6 +11,12 @@
       "title": "Proofread",
       "description": "Proofreads your copied text.",
       "mode": "view"
+    },
+    {
+      "name": "translate",
+      "title": "Translate",
+      "description": "Translates your copied text.",
+      "mode": "view"
     }
   ],
   "preferences": [

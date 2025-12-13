@@ -12,8 +12,8 @@ type Preferences = {
 export type AgentType = keyof typeof systemprompts;
 
 // Function to fetch AI response from OpenRouter
-// Accepts the input text and the agent type
-export async function fetchAIResponse(text: string, agent: AgentType) {
+// Accepts the input text, the agent type, and an optional target language for translations
+export async function fetchAIResponse(text: string, agent: AgentType, targetLanguage?: string) {
   const preferences = getPreferenceValues<Preferences>();
   const apiKey = preferences.apiKey;
 
@@ -25,7 +25,12 @@ export async function fetchAIResponse(text: string, agent: AgentType) {
   // Get the configuration for the selected agent from the JSON file
   const agentPrompts = systemprompts[agent];
   // Get the default system prompt for that agent
-  const systemMessage = agentPrompts.default;
+  let systemMessage = agentPrompts.default;
+
+  // If a target language is provided, append it to the system message
+  if (targetLanguage) {
+    systemMessage = `${systemMessage} Target language: ${targetLanguage}.`;
+  }
 
   // Validate that a system prompt exists
   if (!systemMessage) {
