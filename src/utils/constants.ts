@@ -61,7 +61,7 @@ export const mistral7b_instruct: ModelConfig = {
   name: "Mistral 7b Instruct",
   model: "mistral-7b-instruct",
   thinking: false,
-  openrouter: "mistralai / mistral - 7b - instruct: free",
+  openrouter: "mistralai/mistral-7b-instruct:free",
 };
 
 // MoonshotAI models
@@ -86,5 +86,6 @@ export const models = {
 } as const;
 
 // Default model to use
-export const TRANSLATE_MODEL = gptOSS20;
-export const PROOFREAD_MODEL = gptOSS120;
+export const DEFAULT_MODEL = amazonNova2Lite;
+export const TRANSLATE_MODEL = amazonNova2Lite;
+export const PROOFREAD_MODEL = gptOSS20;
