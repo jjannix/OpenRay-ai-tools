@@ -6,6 +6,7 @@ const { systemprompts } = systempromptsConfig;
 // Define the shape of the preferences object
 type Preferences = {
   apiKey: string; // The OpenRouter API key
+  showNerdStats?: boolean; // Whether to show nerd stats
 };
 
 // Define valid agent names based on the keys in systemprompts.json
@@ -14,6 +15,7 @@ export type AgentType = keyof typeof systemprompts;
 // Function to fetch AI response from OpenRouter
 // Accepts the input text, the agent type, and an optional target language for translations
 export async function fetchAIResponse(text: string, agent: AgentType, agentInstructions?: string) {
+  const startTime = Date.now(); // Track request start time
   const preferences = getPreferenceValues<Preferences>();
   const apiKey = preferences.apiKey;
 
@@ -92,6 +94,9 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
     throw new Error("No content received from AI");
   }
 
-  // Return the AI's response text
-  return result;
+  const endTime = Date.now(); // Track request end time
+  const duration = endTime - startTime; // Calculate duration in milliseconds
+
+  // Return the AI's response text, the model used, and timing info
+  return { content: result, model, requestTime: duration };
 }
