@@ -9,6 +9,43 @@ interface Preferences {
   showNerdStats?: boolean;
 }
 
+// Custom Language Form Component
+interface CustomLanguageFormProps {
+  setSelectedLanguage: (language: string) => void;
+  setShowResults: (show: boolean) => void;
+}
+
+function CustomLanguageForm({ setSelectedLanguage, setShowResults }: CustomLanguageFormProps) {
+  const [customLanguage, setCustomLanguage] = useState<string>("");
+
+  const handleSubmit = () => {
+    if (customLanguage.trim()) {
+      setSelectedLanguage(customLanguage.trim());
+      setShowResults(true);
+    }
+  };
+
+  return (
+    <List
+      navigationTitle="Enter Custom Language"
+      searchBarPlaceholder="Enter language name or code (e.g., Dutch, NL)"
+      onSearchTextChange={setCustomLanguage}
+      searchText={customLanguage}
+    >
+      <List.Item
+        title="Custom Language"
+        subtitle={customLanguage || "Enter a language name or code (e.g., Dutch, NL)"}
+        icon={Icon.Pencil}
+        actions={
+          <ActionPanel>
+            <Action title="Submit" onAction={handleSubmit} icon={Icon.Check} />
+          </ActionPanel>
+        }
+      />
+    </List>
+  );
+}
+
 export default function Command() {
   const preferences = getPreferenceValues<Preferences>();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
@@ -50,86 +87,50 @@ export default function Command() {
     return <Detail markdown={`## Error\n\n${error.message}`} />;
   }
 
+  // Define the list of languages
+  const languages = [
+    { title: "English", subtitle: "Translate to English" },
+    { title: "German", subtitle: "Translate to German" },
+    { title: "French", subtitle: "Translate to French" },
+    { title: "Spanish", subtitle: "Translate to Spanish" },
+    { title: "Italian", subtitle: "Translate to Italian" },
+  ];
+
   // Show language picker list view initially
   if (!showResults) {
     return (
       <List navigationTitle="Translate Text" isLoading={false} searchBarPlaceholder="Select target language...">
+        {languages.map((language) => (
+          <List.Item
+            key={language.title}
+            title={language.title}
+            subtitle={language.subtitle}
+            icon={Icon.Text}
+            actions={
+              <ActionPanel>
+                <Action
+                  title={`Translate to ${language.title}`}
+                  onAction={() => {
+                    setSelectedLanguage(language.title);
+                    setShowResults(true);
+                  }}
+                />
+              </ActionPanel>
+            }
+          />
+        ))}
         <List.Item
-          title="English"
-          subtitle="Translate to English"
-          icon={Icon.Text}
+          title="Custom Language"
+          subtitle="Enter a custom language or code (e.g., Dutch, NL)"
+          icon={Icon.Pencil}
           actions={
             <ActionPanel>
-              <Action
-                title="Translate to English"
-                onAction={() => {
-                  setSelectedLanguage("English");
-                  setShowResults(true);
-                }}
-              />
-            </ActionPanel>
-          }
-        />
-        <List.Item
-          title="German"
-          subtitle="Translate to German"
-          icon={Icon.Text}
-          actions={
-            <ActionPanel>
-              <Action
-                title="Translate to German"
-                onAction={() => {
-                  setSelectedLanguage("German");
-                  setShowResults(true);
-                }}
-              />
-            </ActionPanel>
-          }
-        />
-        <List.Item
-          title="French"
-          subtitle="Translate to French"
-          icon={Icon.Text}
-          actions={
-            <ActionPanel>
-              <Action
-                title="Translate to French"
-                onAction={() => {
-                  setSelectedLanguage("French");
-                  setShowResults(true);
-                }}
-              />
-            </ActionPanel>
-          }
-        />
-        <List.Item
-          title="Spanish"
-          subtitle="Translate to Spanish"
-          icon={Icon.Text}
-          actions={
-            <ActionPanel>
-              <Action
-                title="Translate to Spanish"
-                onAction={() => {
-                  setSelectedLanguage("Spanish");
-                  setShowResults(true);
-                }}
-              />
-            </ActionPanel>
-          }
-        />
-        <List.Item
-          title="Italian"
-          subtitle="Translate to Italian"
-          icon={Icon.Text}
-          actions={
-            <ActionPanel>
-              <Action
-                title="Translate to Italian"
-                onAction={() => {
-                  setSelectedLanguage("Italian");
-                  setShowResults(true);
-                }}
+              <Action.Push
+                title="Enter Custom Language"
+                icon={Icon.Pencil}
+                target={
+                  <CustomLanguageForm setSelectedLanguage={setSelectedLanguage} setShowResults={setShowResults} />
+                }
               />
             </ActionPanel>
           }
@@ -148,14 +149,12 @@ export default function Command() {
       // Set the navigation title with selected language
       navigationTitle={`Translate to ${selectedLanguage || "Unknown"}`}
       metadata={
-        showNerdStats && result && (
+        showNerdStats &&
+        result && (
           <Detail.Metadata>
             <Detail.Metadata.Label title="Model" text={result.model} />
             {result.requestTime && (
-              <Detail.Metadata.Label
-                title="Request Time"
-                text={`${(result.requestTime / 1000).toFixed(2)}s`}
-              />
+              <Detail.Metadata.Label title="Request Time" text={`${(result.requestTime / 1000).toFixed(2)}s`} />
             )}
           </Detail.Metadata>
         )

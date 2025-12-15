@@ -58,21 +58,14 @@ export default function Command() {
       // Set the navigation title
       navigationTitle="Proofread"
       metadata={
-        showNerdStats && result && (
+        showNerdStats &&
+        result && (
           <Detail.Metadata>
             <Detail.Metadata.Label title="Model" text={result.model} />
             {result.requestTime && (
-              <Detail.Metadata.Label
-                title="Request Time"
-                text={`${(result.requestTime / 1000).toFixed(2)}s`}
-              />
+              <Detail.Metadata.Label title="Request Time" text={`${(result.requestTime / 1000).toFixed(2)}s`} />
             )}
-            {result.totalTokens && (
-              <Detail.Metadata.Label
-                title="Total Tokens"
-                text={result.totalTokens.toString()}
-              />
-            )}
+            {result.totalTokens && <Detail.Metadata.Label title="Total Tokens" text={result.totalTokens.toString()} />}
           </Detail.Metadata>
         )
       }
