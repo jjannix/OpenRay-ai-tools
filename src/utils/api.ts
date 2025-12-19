@@ -1,12 +1,14 @@
 import { getPreferenceValues } from "@raycast/api"; // Import function to get user preferences
 import systempromptsConfig from "./systemprompts.json"; // Import system prompts configuration
 import { PROOFREAD_MODEL, TRANSLATE_MODEL, DEFAULT_MODEL } from "./constants"; // Import model configuration
+import { generateMockResponse } from "./mock"; // Import mock response generator
 const { systemprompts } = systempromptsConfig;
 
 // Define the shape of the preferences object
 type Preferences = {
   apiKey: string; // The OpenRouter API key
   showNerdStats?: boolean; // Whether to show nerd stats
+  mockMode?: boolean; // Whether to use mock responses instead of real API calls
 };
 
 // Define valid agent names based on the keys in systemprompts.json
@@ -18,6 +20,12 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
   const startTime = Date.now(); // Track request start time
   const preferences = getPreferenceValues<Preferences>();
   const apiKey = preferences.apiKey;
+  const mockMode = preferences.mockMode ?? false;
+
+  // Check if mock mode is enabled
+  if (mockMode) {
+    return generateMockResponse(text, agent, agentInstructions);
+  }
 
   // Check if API key is present
   if (!apiKey) {
