@@ -36,6 +36,15 @@
       "title": "Enable Nerd Stats",
       "description": "Show technical details like model used and request time",
       "label": "Show model and timing information"
+    },
+    {
+      "name": "mockMode",
+      "type": "checkbox",
+      "required": false,
+      "default": false,
+      "title": "Enable Mock Mode",
+      "description": "Use mock responses instead of making real API calls for testing",
+      "label": "Enable mock mode (no API calls)"
     }
   ],
   "dependencies": {
