@@ -1,4 +1,16 @@
-import { Detail, List, ActionPanel, Action, showToast, Toast, Icon, getPreferenceValues } from "@raycast/api"; // Import UI components
+import {
+  Detail,
+  List,
+  ActionPanel,
+  Action,
+  showToast,
+  Toast,
+  Icon,
+  getPreferenceValues,
+  LaunchProps,
+  launchCommand,
+  LaunchType,
+} from "@raycast/api"; // Import UI components
 import { useState } from "react";
 import { usePromise } from "@raycast/utils"; // Import usePromise hook for async operations
 import { fetchAIResponse } from "./utils/api"; // Import API helper function
@@ -46,14 +58,19 @@ function CustomLanguageForm({ setSelectedLanguage, setShowResults }: CustomLangu
   );
 }
 
-export default function Command() {
+export default function Command(props: LaunchProps<{ launchContext: { content?: string } }>) {
   const preferences = getPreferenceValues<Preferences>();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showNerdStats, setShowNerdStats] = useState<boolean>(preferences.showNerdStats ?? false);
 
   // Hook to read clipboard content asynchronously
-  const { data: clipboardText, isLoading: isReadingClipboard } = usePromise(readText);
+  const { data: clipboardText, isLoading: isReadingClipboard } = usePromise(() => {
+    if (props.launchContext?.content) {
+      return Promise.resolve(props.launchContext.content);
+    }
+    return readText();
+  });
 
   // Hook to process the text with AI once clipboard content is available
   const {
@@ -172,6 +189,23 @@ export default function Command() {
             }}
             icon={Icon.ArrowLeft}
           />
+          <ActionPanel.Section title="Workflow">
+            {result?.content && (
+              <Action
+                title="Forward to Proofread"
+                icon={Icon.Forward}
+                onAction={async () => {
+                  if (result.content) {
+                    await launchCommand({
+                      name: "proofread",
+                      type: LaunchType.UserInitiated,
+                      context: { content: result.content },
+                    });
+                  }
+                }}
+              />
+            )}
+          </ActionPanel.Section>
           <ActionPanel.Section title="Settings">
             <Action
               title={showNerdStats ? "Disable Nerd Stats" : "Enable Nerd Stats"}

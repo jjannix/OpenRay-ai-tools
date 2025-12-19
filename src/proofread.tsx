@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { Detail, ActionPanel, Action, showToast, Toast, Icon, getPreferenceValues } from "@raycast/api"; // Import UI components
+import {
+  Detail,
+  ActionPanel,
+  Action,
+  showToast,
+  Toast,
+  Icon,
+  getPreferenceValues,
+  launchCommand,
+  LaunchType,
+  LaunchProps,
+} from "@raycast/api"; // Import UI components
 import { usePromise } from "@raycast/utils"; // Import usePromise hook for async operations
 import { fetchAIResponse } from "./utils/api"; // Import API helper function
 import { readText } from "./utils/clipboard"; // Import clipboard utilities
@@ -9,12 +20,17 @@ interface Preferences {
   showNerdStats?: boolean;
 }
 
-export default function Command() {
+export default function Command(props: LaunchProps<{ launchContext: { content?: string } }>) {
   const preferences = getPreferenceValues<Preferences>();
   const [style, setStyle] = useState<string | undefined>();
   const [showNerdStats, setShowNerdStats] = useState<boolean>(preferences.showNerdStats ?? false);
   // Hook to read clipboard content asynchronously
-  const { data: clipboardText, isLoading: isReadingClipboard } = usePromise(readText);
+  const { data: clipboardText, isLoading: isReadingClipboard } = usePromise(() => {
+    if (props.launchContext?.content) {
+      return Promise.resolve(props.launchContext.content);
+    }
+    return readText();
+  });
 
   // Hook to process the text with AI once clipboard content is available
   const {
@@ -81,6 +97,23 @@ export default function Command() {
               <Action title="Professional" onAction={() => setStyle("professional")} />
               <Action title="Casual" onAction={() => setStyle("casual")} />
             </ActionPanel.Submenu>
+          </ActionPanel.Section>
+          <ActionPanel.Section title="Workflow">
+            {result?.content && (
+              <Action
+                title="Forward to Translate"
+                icon={Icon.Forward}
+                onAction={async () => {
+                  if (result.content) {
+                    await launchCommand({
+                      name: "translate",
+                      type: LaunchType.UserInitiated,
+                      context: { content: result.content },
+                    });
+                  }
+                }}
+              />
+            )}
           </ActionPanel.Section>
           <ActionPanel.Section title="Settings">
             <Action
