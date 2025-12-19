@@ -72,6 +72,14 @@ export const kimiK2: ModelConfig = {
   openrouter: "moonshotai/kimi-k2:free",
 };
 
+// NVIDIA models
+export const nemotronNano: ModelConfig = {
+  name: "Nemotron 3 Nano 30B",
+  model: "nemotron-3-nano-30b-a3b",
+  thinking: true,
+  openrouter: "nvidia/nemotron-3-nano-30b-a3b:free",
+};
+
 // Export all models as an object for easy iteration
 export const models = {
   amazonNova2Lite,
@@ -83,9 +91,10 @@ export const models = {
   mistralSmall3_1_24b,
   mistral7b_instruct,
   kimiK2,
+  nemotronNano,
 } as const;
 
 // Default model to use
-export const DEFAULT_MODEL = amazonNova2Lite;
-export const TRANSLATE_MODEL = amazonNova2Lite;
+export const DEFAULT_MODEL = nemotronNano;
+export const TRANSLATE_MODEL = nemotronNano;
 export const PROOFREAD_MODEL = gptOSS20;
