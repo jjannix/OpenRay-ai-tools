@@ -92,7 +92,7 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
   // Parse the JSON response
   interface OpenRouterResponse {
     choices: { message: { content: string } }[];
-    usage: {
+    usage?: {
       total_tokens: number;
     };
   }
@@ -108,6 +108,9 @@ export async function fetchAIResponse(text: string, agent: AgentType, agentInstr
   const endTime = Date.now(); // Track request end time
   const duration = endTime - startTime; // Calculate duration in milliseconds
 
+  const totalTokens = data.usage?.total_tokens;
+  const tokensPerSecond = totalTokens && duration > 0 ? totalTokens / (duration / 1000) : undefined;
+
   // Return the AI's response text, the model used, and timing info
-  return { content: result, model, requestTime: duration, totalTokens: data.usage.total_tokens };
+  return { content: result, model, requestTime: duration, totalTokens, tokensPerSecond };
 }

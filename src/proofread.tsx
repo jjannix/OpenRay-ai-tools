@@ -66,6 +66,9 @@ export default function Command() {
               <Detail.Metadata.Label title="Request Time" text={`${(result.requestTime / 1000).toFixed(2)}s`} />
             )}
             {result.totalTokens && <Detail.Metadata.Label title="Total Tokens" text={result.totalTokens.toString()} />}
+            {result.tokensPerSecond && (
+              <Detail.Metadata.Label title="Tokens / Sec" text={result.tokensPerSecond.toFixed(1)} />
+            )}
           </Detail.Metadata>
         )
       }
