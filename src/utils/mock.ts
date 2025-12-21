@@ -8,6 +8,7 @@ export interface MockResponse {
   model: string;
   requestTime: number;
   totalTokens: number;
+  tokensPerSecond: number;
 }
 
 // Generate mock responses based on agent type and input
@@ -44,12 +45,14 @@ export function generateMockResponse(text: string, agent: AgentType, agentInstru
 
   // Estimate token count (rough approximation)
   const totalTokens = Math.max(10, Math.floor(text.length / 4));
+  const tokensPerSecond = totalTokens / (requestTime / 1000);
 
   return {
     content: mockContent,
     model: model,
     requestTime: requestTime,
     totalTokens: totalTokens,
+    tokensPerSecond: tokensPerSecond,
   };
 }
 
